@@ -2,7 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Route, Switch, Redirect } from 'react-router-dom'
 import CreateBreak from './admin/CreateBreak'
+import EditBreak from './admin/EditBreak'
+import DeleteBreak from './admin/DeleteBreak'
 import ViewAllUser from './admin/ViewAllUser'
+import ViewSingleUser from './admin/ViewSingleUser'
 import ViewAllBreak from './admin/ViewAllBreak'
 import ViewAllBreaktime from './breaktime/ViewAllBreaktime'
 import CreateBreaktime from './breaktime/CreateBreaktime'
@@ -18,7 +21,10 @@ const AdminRoutes = () => {
       <Route path="/home" exact component={Home} />
       <Redirect exact from="/" to="/home" />
       <Route path="/create-break" exact component={CreateBreak} />
+      <Route path="/breaks/edit/:id" exact component={EditBreak} />
+      <Route path="/breaks/delete/:id" exact component={DeleteBreak} />
       <Route path="/view-all-users" exact component={ViewAllUser} />
+      <Route path="/view/user/:id" exact component={ViewSingleUser} />
       <Route path="/view-all-break" exact component={ViewAllBreak} />
       <Route path="/view-all-breaktime" exact component={ViewAllBreaktime} />
     </React.Fragment>

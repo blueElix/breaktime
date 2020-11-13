@@ -4,10 +4,15 @@ export default {
 
   loginUser: null,
   userData: null,
+  isFetchingUser: false,
   registerUserData: null,
+  allUsers: null,
+  singleUser: null,
+  userBreaktime: null,
 
   breakList: null,
   selectedBreak: null,
+  isBreakFetching: false,
   breakDataResponse: null,
 
   breaktime: null,

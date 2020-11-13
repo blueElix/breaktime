@@ -1,8 +1,9 @@
+import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
 import BreakForm from './BreakForm'
 
-class CreateBreak extends React.Component {
+class EditBreak extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -14,9 +15,18 @@ class CreateBreak extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.fetchBreakSelectedData()
+  }
+
+  fetchBreakSelectedData = async () => {
+    await this.props.fetchSelectedBreak(this.props.match.params.id)
+  }
+
   handleSubmit = async (formValues) => {
-    await this.props.createBreak(formValues)
-    if (this.props.breakDataResponse.success) {
+    console.log(formValues)
+    await this.props.updateBreak(this.props.match.params.id, formValues)
+    if (this.props.breakDataResponse) {
       let mes = {
         message: this.props.breakDataResponse.success,
         header: 'Form Completed',
@@ -39,6 +49,15 @@ class CreateBreak extends React.Component {
 
   render() {
     let { message, response, header } = this.state.responseMessage
+    let { selectedBreak } = this.props
+
+    if (!selectedBreak) {
+      return <div>Loading... </div>
+    }
+
+    if (selectedBreak._id !== this.props.match.params.id) {
+      this.fetchBreakSelectedData()
+    }
     return (
       <div
         className="ui middle two column centered aligned grid"
@@ -46,7 +65,7 @@ class CreateBreak extends React.Component {
       >
         <div className="column">
           <h2 className="ui teal image header">
-            <div className="content">Create Break</div>
+            <div className="content">Edit Break</div>
           </h2>
           {message ? (
             <div className={`ui ${response} message`}>
@@ -56,7 +75,15 @@ class CreateBreak extends React.Component {
           ) : (
             <div></div>
           )}
-          <BreakForm onSubmit={this.handleSubmit} />
+          <BreakForm
+            initialValues={{
+              name: selectedBreak.name,
+              lengthOfBreak: selectedBreak.lengthOfBreak,
+              times: selectedBreak.times,
+              gracePeriod: selectedBreak.gracePeriod,
+            }}
+            onSubmit={this.handleSubmit}
+          />
         </div>
       </div>
     )
@@ -64,13 +91,16 @@ class CreateBreak extends React.Component {
 }
 const mapStateToProps = (store) => {
   return {
+    selectedBreak: store.breaks.selectedBreak,
     breakDataResponse: store.breaks.breakDataResponse,
   }
 }
+
 const mapDispatch = (dispatch) => {
   return {
-    createBreak: (payload) => dispatch.breaks.createBreak(payload),
+    fetchSelectedBreak: (id) => dispatch.breaks.fetchSelectedBreak(id),
+    updateBreak: (id, payload) => dispatch.breaks.updateBreak(id, payload),
   }
 }
 
-export default connect(mapStateToProps, mapDispatch)(CreateBreak)
+export default connect(mapStateToProps, mapDispatch)(EditBreak)

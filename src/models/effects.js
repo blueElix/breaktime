@@ -1,4 +1,5 @@
 import breakURL from '../apis/break'
+import history from '../history'
 
 export default (dispatch) => ({
   // For Users
@@ -17,6 +18,7 @@ export default (dispatch) => ({
     }
   },
 
+  // For get user profile or data
   async fetchUserData() {
     let token = localStorage.getItem('token')
     try {
@@ -33,6 +35,7 @@ export default (dispatch) => ({
     }
   },
 
+  // For Create User or Register user
   async registerUser(payload) {
     try {
       dispatch.breaks.setFormIsLoading(true)
@@ -46,6 +49,54 @@ export default (dispatch) => ({
     } catch (err) {
       dispatch.breaks.setIsLoading(false)
       dispatch.breaks.setFormIsLoading(err.response.data)
+    }
+  },
+
+  // For get all users(Admin side)
+  async fetchAllUsers() {
+    let loginUser = localStorage.getItem('token')
+    try {
+      dispatch.breaks.setIsFetchingUser(true)
+      let response = await breakURL.get('/auth/users', {
+        headers: { Authorization: `Bearer ${loginUser}` },
+      })
+      dispatch.breaks.setAllUsers(response.data.data)
+      dispatch.breaks.setIsFetchingUser(false)
+    } catch (err) {
+      dispatch.breaks.setIsFetchingUser(false)
+      alert(err.response.data.error)
+    }
+  },
+
+  // For get all users(Admin side)
+  async fetchSingleUser(id) {
+    let loginUser = localStorage.getItem('token')
+    try {
+      dispatch.breaks.setIsFetchingUser(true)
+      let response = await breakURL.get(`/auth/users/${id}`, {
+        headers: { Authorization: `Bearer ${loginUser}` },
+      })
+      dispatch.breaks.setSingleUser(response.data.data)
+      dispatch.breaks.setIsFetchingUser(false)
+    } catch (err) {
+      dispatch.breaks.setIsFetchingUser(false)
+      alert(err.response.data.error)
+    }
+  },
+
+  // For get Single user Breaktime
+  async fetchSingleUserBreaktime(id) {
+    let loginUser = localStorage.getItem('token')
+    try {
+      dispatch.breaks.setIsFetchingUser(true)
+      let response = await breakURL.get(`/breaktime?user=${id}`, {
+        headers: { Authorization: `Bearer ${loginUser}` },
+      })
+      dispatch.breaks.setUserBreaktime(response.data.data)
+      dispatch.breaks.setIsFetchingUser(false)
+    } catch (err) {
+      dispatch.breaks.setIsFetchingUser(false)
+      alert(err.response.data.error)
     }
   },
 
@@ -65,6 +116,21 @@ export default (dispatch) => ({
     }
   },
 
+  // Fetch Single break
+
+  async fetchSelectedBreak(breakId) {
+    try {
+      dispatch.breaks.setBreakIsFetching(true)
+      let response = await breakURL.get(`/breaks/${breakId}`)
+      dispatch.breaks.setSelectedBreak(response.data.data)
+      localStorage.setItem('selectedBreak', JSON.stringify(response.data.data))
+      dispatch.breaks.setBreakIsFetching(false)
+    } catch (err) {
+      console.log(err)
+      dispatch.breaks.setBreakIsFetching(false)
+    }
+  },
+  // Create Break
   async createBreak(payload) {
     let loginUser = localStorage.getItem('token')
     try {
@@ -82,11 +148,15 @@ export default (dispatch) => ({
       dispatch.breaks.setBreakDataResponse(err.response.data)
     }
   },
+
+  // For Break Update
   async updateBreak(id, payload) {
     let loginUser = localStorage.getItem('token')
+    let data = payload.form.breakForm.values
+
     try {
       dispatch.breaks.setFormIsLoading(true)
-      let response = await breakURL.put(`/breaks${id}`, payload, {
+      let response = await breakURL.put(`/breaks/${id}`, data, {
         headers: {
           Authorization: `Bearer ${loginUser}`,
           'Content-Type': 'application/json',
@@ -96,7 +166,27 @@ export default (dispatch) => ({
       dispatch.breaks.setFormIsLoading(false)
     } catch (err) {
       dispatch.breaks.setFormIsLoading(false)
-      dispatch.breaks.setBreakDataResponse(err.response.data)
+      dispatch.breaks.setBreakDataResponse(err.response.data.error)
+    }
+  },
+
+  // For Break Delete
+  async deleteBreak(id) {
+    let loginUser = localStorage.getItem('token')
+    try {
+      dispatch.breaks.setIsFetching(true)
+      let response = await breakURL.delete(`/breaks/${id}`, {
+        headers: {
+          Authorization: `Bearer ${loginUser}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      dispatch.breaks.setBreakDataResponse(response.data)
+      dispatch.breaks.setIsFetching(false)
+      history.push('/view-all-break')
+    } catch (err) {
+      dispatch.breaks.setIsFetching(false)
+      dispatch.breaks.setBreakDataResponse(err.response.data.error)
     }
   },
 
@@ -115,6 +205,7 @@ export default (dispatch) => ({
       //alert(err.response.data.error)
     }
   },
+
   // For Breaktime create
   async createBreaktime(payload) {
     let loginUser = localStorage.getItem('token')
@@ -136,6 +227,8 @@ export default (dispatch) => ({
       alert(err.response.data.error)
     }
   },
+
+  // For End break
   async endBreaktime(payload, state) {
     let breaktimeStorage = localStorage.getItem('currentBreaktime')
     let breaktimeId = JSON.parse(breaktimeStorage)
