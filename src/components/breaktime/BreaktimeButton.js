@@ -3,28 +3,18 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 
 class BreaktimeButton extends React.Component {
-  state = {
-    buttonData: {
-      button: '',
-      label: '',
-      type: '',
-    },
-  }
-
   breakFunction = async (id) => {
     let breakStorage = localStorage.getItem('isOnBreak')
     console.log(id)
     if (breakStorage) {
       await this.props.endBreaktime(id)
-      this.fetchBreakData()
-      this.renderBreaktime()
+      await this.props.fetchBreakTime()
     } else {
       const payload = {
         break: id,
       }
-      this.props.createBreaktime(payload)
-      this.fetchBreakData()
-      this.renderBreaktime()
+      await this.props.createBreaktime(payload)
+      await this.props.fetchBreakTime()
     }
   }
 
@@ -49,20 +39,27 @@ class BreaktimeButton extends React.Component {
       userData = JSON.parse(userStore)
     }
 
-    breaktime.map((blist) => {
+    console.log(breakId)
+
+    let buttonData = breaktime.map((blist) => {
+      let data = {
+        button: '',
+        label: '',
+        type: '',
+        breakId: blist.break._id,
+      }
       if (
         blist.user === userData._id &&
         blist.break._id === breakId &&
         blist.createdAt === today &&
         userData.currentBreaktime
       ) {
-        return this.setState({
-          buttonData: {
-            button: 'onBack',
-            label: 'Back From Break',
-            type: 'primary',
-          },
-        })
+        data = {
+          button: 'onBack',
+          label: 'Back From Break',
+          type: 'primary',
+          breakId: blist.break._id,
+        }
       } else if (
         blist.user === userData._id &&
         blist.break._id === breakId &&
@@ -70,28 +67,28 @@ class BreaktimeButton extends React.Component {
         blist.start &&
         blist.end
       ) {
-        return this.setState({
-          buttonData: {
-            button: 'done',
-            label: 'Done Break',
-            type: 'secondary disabled',
-          },
-        })
+        data = {
+          button: 'done',
+          label: 'Done Break',
+          type: 'secondary disabled',
+          breakId: blist.break._id,
+        }
       }
+      return data
     })
 
     return (
       <button
         className={`ui button ${
-          this.state.buttonData.type
-            ? this.state.buttonData.type
+          buttonData.breakId === breakId
+            ? buttonData.type
             : defaultButtonData.type
         }`}
-        onClick={() => alert('hello')}
+        onClick={() => {
+          this.breakFunction(breakId)
+        }}
       >
-        {this.state.buttonData.label
-          ? this.state.buttonData.label
-          : defaultButtonData.label}
+        {buttonData.label ? buttonData.label : defaultButtonData.label}
       </button>
     )
   }
