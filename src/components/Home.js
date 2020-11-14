@@ -10,6 +10,7 @@ class Home extends React.Component {
     await this.props.fetchBreak()
     await this.props.fetchUserData()
     await this.props.fetchBreakTime()
+    await this.props.fetchAllUsers()
   }
   render() {
     return (
@@ -31,6 +32,7 @@ const mapDispatch = (dispatch) => {
     fetchBreak: dispatch.breaks.fetchBreak,
     fetchBreakTime: dispatch.breaks.fetchBreakTime,
     fetchUserData: dispatch.breaks.fetchUserData,
+    fetchAllUsers: dispatch.breaks.fetchAllUsers,
   }
 }
 

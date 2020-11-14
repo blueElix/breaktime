@@ -7,6 +7,7 @@ import DeleteBreak from './admin/DeleteBreak'
 import ViewAllUser from './admin/ViewAllUser'
 import ViewSingleUser from './admin/ViewSingleUser'
 import ViewAllBreak from './admin/ViewAllBreak'
+import Statistics from './admin/Statistics'
 import ViewAllBreaktime from './breaktime/ViewAllBreaktime'
 import CreateBreaktime from './breaktime/CreateBreaktime'
 //import ViewProfile from './user/ViewProfile'
@@ -27,6 +28,7 @@ const AdminRoutes = () => {
       <Route path="/view/user/:id" exact component={ViewSingleUser} />
       <Route path="/view-all-break" exact component={ViewAllBreak} />
       <Route path="/view-all-breaktime" exact component={ViewAllBreaktime} />
+      <Route path="/statistics" exact component={Statistics} />
     </React.Fragment>
   )
 }

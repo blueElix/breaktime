@@ -46,6 +46,9 @@ class Header extends React.Component {
         <Link to="/view-all-breaktime" className="item">
           View All Breaktime
         </Link>
+        <Link to="/statistics" className="item">
+          Statistics
+        </Link>
       </React.Fragment>
     )
   }
