@@ -1,25 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import LoginForm from './LoginForm'
 import history from '../../history'
 
 class Login extends React.Component {
-  state = {
-    email: '',
-    password: '',
-  }
-
-  handleSubmit = async (e) => {
-    e.preventDefault()
-    let payload = {
-      email: this.state.email,
-      password: this.state.password,
-    }
+  handleSubmit = async (formValues) => {
     let token = localStorage.getItem('token')
+    let { loginUser } = this.props
+    await this.props.fetchLoginUser(formValues)
 
-    await this.props.fetchLoginUser(payload)
-
-    if (token) {
+    if (token || loginUser) {
       history.push('/home')
     }
   }
@@ -34,42 +25,7 @@ class Login extends React.Component {
           <h2 className="ui teal image header">
             <div className="content">Login to your account</div>
           </h2>
-          <form className="ui large form" onSubmit={this.handleSubmit}>
-            <div className="ui stacked segment">
-              <div className="field">
-                <div className="ui left icon input">
-                  <i className="user icon" />
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter Email address"
-                    onChange={(event) =>
-                      this.setState({ email: event.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="field">
-                <div className="ui left icon input">
-                  <i className="lock icon" />
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter Password"
-                    onChange={(event) =>
-                      this.setState({ password: event.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <input
-                className="ui fluid large teal submit button"
-                type="submit"
-                value="Login"
-              />
-            </div>
-            <div className="ui error message" />
-          </form>
+          <LoginForm onSubmit={this.handleSubmit} />
           <div className="ui message">
             New to us?{' '}
             <Link to="/register" className="item">
@@ -86,14 +42,11 @@ const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
     loginUser: store.breaks.loginUser,
-    isFetchingAll: store.breaks.isFetchingAll,
   }
 }
-
 const mapDispatch = (dispatch) => {
   return {
     fetchLoginUser: (payload) => dispatch.breaks.fetchLoginUser(payload),
-    fetchUserData: dispatch.breaks.fetchUserData,
   }
 }
 
