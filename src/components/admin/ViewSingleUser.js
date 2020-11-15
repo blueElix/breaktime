@@ -12,6 +12,7 @@ const ItemContainer = ({ title, name }) => {
     </div>
   )
 }
+
 class ViewAllUser extends React.Component {
   componentDidMount() {
     this.fetchUsersData()
@@ -22,24 +23,41 @@ class ViewAllUser extends React.Component {
     await this.props.fetchSingleUserBreaktime(this.props.match.params.id)
   }
 
-  renderUsersData = () => {
-    let { allUsers } = this.props
-    return allUsers.map((user) => {
+  renderUserBreaktime = () => {
+    let { userBreaktime } = this.props
+    return userBreaktime.map((btime) => {
       return (
-        <tr key={user._id}>
-          <td>{user.fname}</td>
-          <td>{user.lname}</td>
-          <td>{user.email}</td>
-          <td>{user.role}</td>
-          <td>
-            <button className="ui primary button">View Details</button>
-          </td>
+        <tr key={btime._id}>
+          <td>{btime.breakname}</td>
+          <td>{btime.createdAt}</td>
+          <td>{btime.start}</td>
+          <td>{btime.end}</td>
+          <td>{btime.overbreak ? 'YES' : 'NO'}</td>
+          <td>{btime.minsLate}</td>
         </tr>
       )
     })
   }
+
+  renderTable = () => {
+    return (
+      <table className="ui table">
+        <thead>
+          <tr>
+            <th>Break Name</th>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Overbrake</th>
+            <th>Mins. Late</th>
+          </tr>
+        </thead>
+        <tbody>{this.renderUserBreaktime()}</tbody>
+      </table>
+    )
+  }
   render() {
-    let { isFetchingUser, singleUser } = this.props
+    let { isFetchingUser, singleUser, userBreaktime } = this.props
     if (isFetchingUser || !singleUser) {
       return <Loader />
     }
@@ -54,24 +72,17 @@ class ViewAllUser extends React.Component {
               <ItemContainer name={singleUser.fname} title="FIRST NAME" />
               <ItemContainer name={singleUser.lname} title="LAST NAME" />
               <ItemContainer name={singleUser.email} title="EMAIL" />
-              <ItemContainer
-                name={singleUser.userBreaktime}
-                title="USER CURRENT BREAKTIME:"
-              />
             </div>
           </div>
-          {/* <table className="ui table">
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>{allUsers ? this.renderUsersData() : ''}</tbody>
-          </table> */}
+          {userBreaktime.length > 0 ? (
+            this.renderTable()
+          ) : (
+            <div className="ui warning message">
+              <i className="close icon"></i>
+              <div className="header">Sorry</div>
+              This user doesn't have breaktime list to show.
+            </div>
+          )}
         </div>
       </div>
     )
@@ -80,6 +91,7 @@ class ViewAllUser extends React.Component {
 
 const mapStateToProps = (store) => {
   return {
+    userBreaktime: store.breaks.userBreaktime,
     singleUser: store.breaks.singleUser,
     isFetchingUser: store.breaks.isFetchingUser,
   }
