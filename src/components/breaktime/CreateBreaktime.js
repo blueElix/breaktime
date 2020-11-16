@@ -1,90 +1,148 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import BreaktimeButton from './BreaktimeButton'
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import BreaktimeButton from './BreaktimeButton';
 
 const Loader = () => {
-  return <div className="ui active centered inline loader"></div>
-}
-class CreateBreak extends React.Component {
-  state = {
-    isBreak: false,
-    currentBreakId: null,
-    buttonArray: [],
-    breakType: null,
-  }
-  componentDidMount() {
-    this.fetchBreakData()
-  }
+  return <div className="ui active centered inline loader"></div>;
+};
+const CreateBreak = ({
+  isFetching,
+  breakList,
+  fetchBreak,
+  fetchBreakTime,
+  fetchUserData,
+  userData,
+  createBreaktime,
+  endBreaktime,
+  fetchUserBreakTime,
+  myBreaktime,
+  breaktime,
+}) => {
+  const fetchBreakData = async () => {
+    await fetchBreak();
+    await fetchBreakTime();
+    await fetchUserData();
+    await fetchUserBreakTime();
+  };
 
-  // componentDidUpdate(breaktime) {
-  //   this.fetchBreakData()
-  // }
-  fetchBreakData = async () => {
-    await this.props.fetchBreak()
-    await this.props.fetchBreakTime()
-    await this.props.fetchUserData()
-  }
+  //states
+  const [isBreak, setIsBreak] = useState(false);
+  const [currentBreakId, setCurrentBreakId] = useState(null);
+  const [buttonArray, setButtonArray] = useState([]);
+  const [breakType, setBreakType] = useState(null);
+  const [loadingButton, setLoadingButton] = useState(false);
 
-  renderBreaktime() {
-    let { breakList } = this.props
+  // useEffect
+  useEffect(() => {
+    const cdm = async () => {
+      fetchBreakData();
+    };
+    cdm();
+  }, []);
 
-    if (!breakList) {
-      let breakListStore = localStorage.getItem('breakList')
-      breakList = JSON.parse(breakListStore)
+  const renderButton = ({ _id, times, name }) => {
+    let bcount = 0;
+    if (myBreaktime) {
+      myBreaktime.map((m) => {
+        if (m.end && m.breakname === name) {
+          bcount = bcount + 1;
+        }
+      });
     }
 
-    return breakList.map((list) => {
-      return (
-        <div className="item" key={list._id}>
-          <div className="right floated content">
-            <BreaktimeButton breakId={list._id} />
-          </div>
-          <span className="ui avatar image">
-            <i className="hourglass start icon" aria-hidden="true"></i>
-          </span>
-          <div className="content">
-            {list.name} - {list.lengthOfBreak}mins
-          </div>
-        </div>
-      )
-    })
-  }
+    const clickFunction = () => {
+      if (_id === userData.currentBreakId) {
+        const payload = userData.currentBreaktime;
+        endBreaktime(payload);
+        fetchBreakData();
+      } else {
+        const payload = {
+          break: _id,
+        };
+        createBreaktime(payload);
+        fetchBreakData();
+      }
+    };
 
-  render() {
-    let breakListStore = localStorage.getItem('breakList')
-    let breaktimeStore = localStorage.getItem('breaktime')
+    let active = '';
+    let buttonValue = 'Take break';
+    let buttonDisabled = '';
+    if (userData.currentBreakId) {
+      buttonDisabled = 'disabled';
+    }
+    if (_id === userData.currentBreakId) {
+      buttonDisabled = '';
+      active = 'active';
+      buttonValue = 'Return from break';
+    }
+    if (bcount >= times) {
+      buttonDisabled = 'disabled';
+      buttonValue = 'FInished';
+    }
+
     return (
-      <div className="ui grid centered" style={{ padding: '10px' }}>
-        <div className="column ten wide">
-          {this.props.isFetching ? (
-            <div className="ui active centered inline loader"></div>
-          ) : (
-            ''
-          )}
-          <h2 className="ui teal image header">
-            <div className="content">
-              <span>
-                <i className="coffee icon"></i>
-              </span>{' '}
-              BREAKTIME
+      <React.Fragment>
+        {/* <div className="ui active inverted dimmer">
+          <div className="ui big text loader">Loading</div>
+        </div> */}
+        <button
+          className={`ui teal button ${active} ${buttonDisabled}
+    `}
+          onClick={() => {
+            clickFunction();
+          }}
+        >
+          {buttonValue}
+        </button>
+      </React.Fragment>
+    );
+  };
+
+  const renderBreaktime = () => {
+    return (
+      <React.Fragment>
+        {breakList.map((list) => {
+          return (
+            <div className="item" key={list._id}>
+              <div className="right floated content">{renderButton(list)}</div>
+              <span className="ui avatar image">
+                <i className="hourglass start icon" aria-hidden="true"></i>
+              </span>
+              <div className="content">
+                {list.name} - {list.lengthOfBreak}mins
+              </div>
             </div>
-          </h2>
-          {this.props.isFetching ? (
-            <Loader />
-          ) : (
-            <div className="ui middle aligned divided list">
-              {breakListStore && breaktimeStore ? (
-                this.renderBreaktime()
-              ) : (
-                <Loader />
-              )}
-            </div>
-          )}
-        </div>
+          );
+        })}
+      </React.Fragment>
+    );
+  };
+
+  let breakListStore = localStorage.getItem('breakList');
+  let breaktimeStore = localStorage.getItem('breaktime');
+
+  return (
+    <div className="ui grid centered" style={{ padding: '10px' }}>
+      <div className="column ten wide">
+        <h2 className="ui teal image header">
+          <div className="content">
+            <span>
+              <i className="coffee icon"></i>
+            </span>{' '}
+            BREAKTIME
+          </div>
+        </h2>
+        {isFetching ? (
+          <Loader />
+        ) : (
+          <div className="ui middle aligned divided list">
+            {breakListStore && breaktimeStore ? renderBreaktime() : <Loader />}
+          </div>
+        )}
       </div>
-    )
-  }
-}
+    </div>
+  );
+};
 
 const mapStateToProps = (store) => {
   return {
@@ -93,15 +151,19 @@ const mapStateToProps = (store) => {
     userData: store.breaks.userData,
     breaktime: store.breaks.breaktime,
     isOnBreak: store.breaks.isOnBreak,
-  }
-}
+    myBreaktime: store.breaks.myBreaktime,
+    breaktimeTaken: store.breaks.breaktimeTaken,
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
+    fetchUserBreakTime: dispatch.breaks.fetchUserBreakTime,
     fetchUserData: dispatch.breaks.fetchUserData,
     fetchBreak: dispatch.breaks.fetchBreak,
     fetchBreakTime: dispatch.breaks.fetchBreakTime,
     createBreaktime: (payload) => dispatch.breaks.createBreaktime(payload),
     endBreaktime: (payload) => dispatch.breaks.endBreaktime(payload),
-  }
-}
-export default connect(mapStateToProps, mapDispatch)(CreateBreak)
+    setBreaktimeTaken: (payload) => dispatch.breaks.setBreaktimeTaken(payload),
+  };
+};
+export default connect(mapStateToProps, mapDispatch)(CreateBreak);

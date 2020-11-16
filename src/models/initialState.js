@@ -16,11 +16,13 @@ export default {
   breakDataResponse: null,
 
   breaktime: null,
+  myBreaktime: null,
   currentBreaktime: null,
+  breaktimeTaken: null,
 
   isOnBreak: false,
   isLoading: false,
   isFormLoading: false,
   isLoadingData: false,
   isFetching: false,
-}
+};

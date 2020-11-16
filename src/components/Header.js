@@ -1,39 +1,44 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import history from '../history'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import history from '../history';
 
 class Header extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       role: false,
-    }
+    };
   }
 
   componentDidMount() {
-    this.importUserData()
+    this.importUserData();
   }
 
   importUserData = async () => {
-    await this.props.fetchUserData()
-    let { userData } = this.props
-    let storeUser = localStorage.getItem('userData')
-    let user = JSON.parse(storeUser)
+    await this.props.fetchUserData();
+    let { userData } = this.props;
+    let storeUser = localStorage.getItem('userData');
+    let user = JSON.parse(storeUser);
 
-    this.setState({ role: user.role })
+    this.setState({ role: user.role });
     if (userData) {
-      this.setState({ role: userData.role })
+      this.setState({ role: userData.role });
     }
 
     if (!storeUser || !userData) {
-      this.logout()
+      this.logout();
     }
-  }
+  };
 
   renderForAdmin = () => {
     return (
-      <React.Fragment>
+      <div className="ui left fixed vertical menu">
+        <div className="item">
+          <span>
+            <i className="big clock outline icon"></i>
+          </span>
+        </div>
         <Link to="/create-break" className="item">
           Create Break
         </Link>
@@ -49,57 +54,65 @@ class Header extends React.Component {
         <Link to="/statistics" className="item">
           Statistics
         </Link>
-      </React.Fragment>
-    )
-  }
+        <Link to="/" className="item">
+          Profile
+        </Link>
+        <Link to="/" className="item" onClick={() => this.logout()}>
+          Logout
+        </Link>
+      </div>
+    );
+  };
   renderForUser = () => {
     return (
-      <React.Fragment>
+      <div className="ui secondary  menu">
         <Link to="/breaktime" className="item">
           Breaktime
         </Link>
-      </React.Fragment>
-    )
-  }
+        <Link to="/" className="item">
+          Profile
+        </Link>
+
+        <div className="right menu">
+          <div className="item">
+            {/* <div className="ui icon input">
+              <input type="text" placeholder="Search..." />
+              <i className="search link icon"></i>
+            </div> */}
+            <Link to="/" className="ui item" onClick={() => this.logout()}>
+              Logout
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  };
   logout = () => {
-    history.push('/')
-    localStorage.clear()
-    window.location.reload(false)
-  }
+    history.push('/');
+    localStorage.clear();
+    window.location.reload(false);
+  };
   render() {
     return (
       <div>
-        <div className="ui left fixed vertical menu">
-          <div className="item">
-            <span>
-              <i className="big clock outline icon"></i>
-            </span>
-          </div>
-          {this.state.role === 'admin'
-            ? this.renderForAdmin()
-            : this.renderForUser()}
-          <Link to="/" className="item">
-            Profile
-          </Link>
-          <Link to="/" className="item" onClick={() => this.logout()}>
-            Logout
-          </Link>
-        </div>
+        {this.state.role === 'admin'
+          ? this.renderForAdmin()
+          : this.renderForUser()}
       </div>
-    )
+    );
   }
 }
 
 const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
-  }
-}
+  };
+};
 
 const mapDispatch = (dispatch) => {
   return {
     fetchUserData: dispatch.breaks.fetchUserData,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatch)(Header)
+export default connect(mapStateToProps, mapDispatch)(Header);
