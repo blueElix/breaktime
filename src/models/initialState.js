@@ -17,6 +17,7 @@ export default {
   breakDataResponse: null,
 
   breaktime: null,
+  userBreaktimeList: null,
   myBreaktime: null,
   currentBreaktime: null,
   breaktimeTaken: null,

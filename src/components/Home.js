@@ -1,21 +1,22 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
 class Home extends React.Component {
   componentDidMount() {
-    this.importBreakList();
+    this.importBreakList()
   }
 
   importBreakList = async () => {
-    await this.props.fetchBreak();
-    await this.props.fetchAllowedBreaks();
-    await this.props.fetchUserData();
-    await this.props.fetchBreakTime();
+    await this.props.fetchBreak()
+    await this.props.fetchAllowedBreaks()
+    await this.props.fetchUserData()
+    await this.props.fetchBreakTime()
+    await this.props.fetchUserBreaktimeList()
 
     if (this.props.userData === 'admin') {
-      await this.props.fetchAllUsers();
+      await this.props.fetchAllUsers()
     }
-  };
+  }
   render() {
     return (
       <div className="ui container">
@@ -24,15 +25,15 @@ class Home extends React.Component {
           WELCOME!!
         </h2>
       </div>
-    );
+    )
   }
 }
 
 const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
-  };
-};
+  }
+}
 const mapDispatch = (dispatch) => {
   return {
     fetchBreak: dispatch.breaks.fetchBreak,
@@ -40,7 +41,8 @@ const mapDispatch = (dispatch) => {
     fetchBreakTime: dispatch.breaks.fetchBreakTime,
     fetchUserData: dispatch.breaks.fetchUserData,
     fetchAllUsers: dispatch.breaks.fetchAllUsers,
-  };
-};
+    fetchUserBreaktimeList: dispatch.breaks.fetchUserBreaktimeList,
+  }
+}
 
-export default connect(mapStateToProps, mapDispatch)(Home);
+export default connect(mapStateToProps, mapDispatch)(Home)

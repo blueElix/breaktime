@@ -50,6 +50,25 @@ export default (dispatch) => ({
     }
   },
 
+  // For get user profile or data
+  async fetchUserBreaktimeList() {
+    let token = localStorage.getItem('token')
+    try {
+      dispatch.breaks.setIsFetching(true)
+      let response = await breakURL.get('/breaktime/me/all-breaks', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      dispatch.breaks.setUserBreaktimeList(response.data.data)
+      localStorage.setItem(
+        'userBreaktimeList',
+        JSON.stringify(response.data.data)
+      )
+      dispatch.breaks.setIsFetching(true)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
   // For Create User or Register user
   async registerUser(payload) {
     try {
