@@ -26,20 +26,47 @@ export default (dispatch) => ({
       let response = await breakURL.get('/auth/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       dispatch.breaks.setUserData(response.data.data);
       localStorage.setItem('userData', JSON.stringify(response.data.data));
-
-      if (response.data.data.currentBreaktime) {
-        dispatch.breaks.fetchUserCurrentBreaktime(
-          response.data.data.currentBreaktime,
-        );
-      }
-
-      dispatch.breaks.setIsLoadingData(false);
     } catch (err) {
       console.log(err);
+    }
+  },
+
+  // For get user profile or data
+  async updateUserData(payload) {
+    let token = localStorage.getItem('token');
+    try {
+      dispatch.breaks.setIsLoadingData(true);
+      let response = await breakURL.put('/auth/updatedetails', payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      dispatch.breaks.setUserData(response.data.data);
+      localStorage.setItem('userData', JSON.stringify(response.data.data));
       dispatch.breaks.setIsLoadingData(false);
+      history.push('/view-profile');
+    } catch (err) {
+      dispatch.breaks.setIsLoadingData(false);
+      console.log(err);
+    }
+  },
+
+  // For get user profile or data
+  async fetchUserBreaktimeList() {
+    let token = localStorage.getItem('token');
+    try {
+      dispatch.breaks.setIsFetching(true);
+      let response = await breakURL.get('/breaktime/me/all-breaks', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      dispatch.breaks.setUserBreaktimeList(response.data.data);
+      localStorage.setItem(
+        'userBreaktimeList',
+        JSON.stringify(response.data.data),
+      );
+      dispatch.breaks.setIsFetching(true);
+    } catch (err) {
+      console.log(err);
     }
   },
 
