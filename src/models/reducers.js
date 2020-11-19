@@ -69,6 +69,9 @@ export default {
   setIsFetching(state, payload) {
     return { ...state, isFetching: payload };
   },
+  setIsFetchingButton(state, payload) {
+    return { ...state, isFetchingButton: payload };
+  },
   setBreakIsFetching(state, payload) {
     return { ...state, isBreakFetching: payload };
   },
