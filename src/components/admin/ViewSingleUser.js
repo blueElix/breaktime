@@ -1,6 +1,6 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import Loader from '../Loader'
+import React from 'react';
+import { connect } from 'react-redux';
+import Loader from '../Loader';
 
 const ItemContainer = ({ title, name }) => {
   return (
@@ -10,21 +10,21 @@ const ItemContainer = ({ title, name }) => {
         {name}
       </div>
     </div>
-  )
-}
+  );
+};
 
 class ViewAllUser extends React.Component {
   componentDidMount() {
-    this.fetchUsersData()
+    this.fetchUsersData();
   }
 
   fetchUsersData = async () => {
-    await this.props.fetchSingleUser(this.props.match.params.id)
-    await this.props.fetchSingleUserBreaktime(this.props.match.params.id)
-  }
+    await this.props.fetchSingleUser(this.props.match.params.id);
+    await this.props.fetchSingleUserBreaktime(this.props.match.params.id);
+  };
 
   renderUserBreaktime = () => {
-    let { userBreaktime } = this.props
+    let { userBreaktime } = this.props;
     return userBreaktime.map((btime) => {
       return (
         <tr key={btime._id}>
@@ -35,9 +35,9 @@ class ViewAllUser extends React.Component {
           <td>{btime.overbreak ? 'YES' : 'NO'}</td>
           <td>{btime.minsLate}</td>
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   renderTable = () => {
     return (
@@ -54,12 +54,13 @@ class ViewAllUser extends React.Component {
         </thead>
         <tbody>{this.renderUserBreaktime()}</tbody>
       </table>
-    )
-  }
+    );
+  };
   render() {
-    let { isFetchingUser, singleUser, userBreaktime } = this.props
+    let { isFetchingUser, singleUser, userBreaktime } = this.props;
+    console.log(userBreaktime, 'userBreaktime');
     if (isFetchingUser || !singleUser) {
-      return <Loader />
+      return <Loader />;
     }
     return (
       <div className="ui grid centered" style={{ padding: '10px' }}>
@@ -74,7 +75,7 @@ class ViewAllUser extends React.Component {
               <ItemContainer name={singleUser.email} title="EMAIL" />
             </div>
           </div>
-          {userBreaktime.length > 0 ? (
+          {userBreaktime.length > 0 || userBreaktime === null ? (
             this.renderTable()
           ) : (
             <div className="ui warning message">
@@ -85,7 +86,7 @@ class ViewAllUser extends React.Component {
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -94,14 +95,14 @@ const mapStateToProps = (store) => {
     userBreaktime: store.breaks.userBreaktime,
     singleUser: store.breaks.singleUser,
     isFetchingUser: store.breaks.isFetchingUser,
-  }
-}
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
     fetchSingleUser: (id) => dispatch.breaks.fetchSingleUser(id),
     fetchSingleUserBreaktime: (id) =>
       dispatch.breaks.fetchSingleUserBreaktime(id),
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatch)(ViewAllUser)
+export default connect(mapStateToProps, mapDispatch)(ViewAllUser);

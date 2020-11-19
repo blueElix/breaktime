@@ -33,7 +33,7 @@ class Header extends React.Component {
 
   renderForAdmin = () => {
     return (
-      <div className="ui left fixed vertical menu">
+      <div className="ui left fixed vertical  menu">
         <div className="item">
           <span>
             <i className="big clock outline icon"></i>
@@ -54,7 +54,7 @@ class Header extends React.Component {
         <Link to="/statistics" className="item">
           Statistics
         </Link>
-        <Link to="/" className="item">
+        <Link to="/view-profile" className="item">
           Profile
         </Link>
         <Link to="/" className="item" onClick={() => this.logout()}>
@@ -69,7 +69,7 @@ class Header extends React.Component {
         <Link to="/breaktime" className="item">
           Breaktime
         </Link>
-        <Link to="/" className="item">
+        <Link to="/view-profile" className="item">
           Profile
         </Link>
 

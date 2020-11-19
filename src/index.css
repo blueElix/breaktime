@@ -1,0 +1,13 @@
+.main {
+  background-color: red;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+.side {
+  width: 10%;
+  height: 100vh;
+}
+.content {
+  width: 80%;
+}

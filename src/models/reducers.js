@@ -16,21 +16,24 @@ export default {
     return { ...state, userData: payload };
   },
   setAllUsers(state, payload) {
-    return { ...state, allUsers: payload }
+    return { ...state, allUsers: payload };
   },
   setSingleUser(state, payload) {
-    return { ...state, singleUser: payload }
+    return { ...state, singleUser: payload };
   },
   setUserBreaktime(state, payload) {
-    return { ...state, userBreaktime: payload }
+    return { ...state, userBreaktime: payload };
   },
   setIsFetchingUser(state, payload) {
-    return { ...state, isFetchingUser: payload }
+    return { ...state, isFetchingUser: payload };
   },
 
   // For Break
   setBreakList(state, payload) {
     return { ...state, breakList: payload };
+  },
+  setAllowedBreakList(state, payload) {
+    return { ...state, allowedBreakList: payload };
   },
   setSelectedBreak(state, payload) {
     return { ...state, selectedBreak: payload };
@@ -67,7 +70,7 @@ export default {
     return { ...state, isFetching: payload };
   },
   setBreakIsFetching(state, payload) {
-    return { ...state, isBreakFetching: payload }
+    return { ...state, isBreakFetching: payload };
   },
   setFormIsLoading(state, payload) {
     return { ...state, isFormLoading: payload };

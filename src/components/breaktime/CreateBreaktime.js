@@ -5,106 +5,101 @@ import BreaktimeButton from './BreaktimeButton';
 const Loader = () => {
   return <div className="ui active centered inline loader"></div>;
 };
+
 const CreateBreak = ({
   isFetching,
   breakList,
   fetchBreak,
-  fetchBreakTime,
   fetchUserData,
   userData,
   createBreaktime,
   endBreaktime,
   fetchUserBreakTime,
   myBreaktime,
-  breaktime,
 }) => {
-  const fetchBreakData = async () => {
-    await fetchBreak();
-    await fetchBreakTime();
-    await fetchUserData();
-    await fetchUserBreakTime();
-  };
-
-  //states
-  const [isBreak, setIsBreak] = useState(false);
-  const [currentBreakId, setCurrentBreakId] = useState(null);
-  const [buttonArray, setButtonArray] = useState([]);
-  const [breakType, setBreakType] = useState(null);
-  const [loadingButton, setLoadingButton] = useState(false);
+  // //states
+  // const [isBreak, setIsBreak] = useState(false);
+  // const [currentBreakId, setCurrentBreakId] = useState(null);
+  // const [buttonArray, setButtonArray] = useState([]);
+  // const [breakType, setBreakType] = useState(null);
+  const [allowedBreakList, setAllowedBreakList] = useState(null);
 
   // useEffect
   useEffect(() => {
     const cdm = async () => {
-      fetchBreakData();
+      await fetchUserBreakTime();
+      await fetchUserData();
+      await fetchBreak();
+      checkAllowedBreaks();
     };
     cdm();
   }, []);
 
-  const renderButton = ({ _id, times, name }) => {
-    let bcount = 0;
-    if (myBreaktime) {
-      myBreaktime.map((m) => {
-        if (m.end && m.breakname === name) {
-          bcount = bcount + 1;
-        }
+  const checkAllowedBreaks = () => {
+    console.log(breakList, 'breaklist');
+    console.log(myBreaktime, 'myBreaktime');
+    if (Array.isArray(breakList) && Array.isArray(myBreaktime)) {
+      breakList.map((b, index) => {
+        let bcount = 0;
+
+        myBreaktime.map((m) => {
+          if (m.breakname === b.name) {
+            bcount = bcount + 1;
+          }
+          if (bcount >= b.times) {
+            breakList[index].buttonDisabled = 'disabled';
+            breakList[index].buttonValue = 'Finished';
+          }
+        });
       });
-    }
 
-    const clickFunction = () => {
-      if (_id === userData.currentBreakId) {
-        const payload = userData.currentBreaktime;
-        endBreaktime(payload);
-        fetchBreakData();
-      } else {
-        const payload = {
-          break: _id,
-        };
-        createBreaktime(payload);
-        fetchBreakData();
-      }
-    };
-
-    let active = '';
-    let buttonValue = 'Take break';
-    let buttonDisabled = '';
-    if (userData.currentBreakId) {
-      buttonDisabled = 'disabled';
+      setAllowedBreakList(breakList);
     }
-    if (_id === userData.currentBreakId) {
-      buttonDisabled = '';
-      active = 'active';
-      buttonValue = 'Return from break';
-    }
-    if (bcount >= times) {
-      buttonDisabled = 'disabled';
-      buttonValue = 'FInished';
-    }
-
-    return (
-      <React.Fragment>
-        {/* <div className="ui active inverted dimmer">
-          <div className="ui big text loader">Loading</div>
-        </div> */}
-        <button
-          className={`ui teal button ${active} ${buttonDisabled}
-    `}
-          onClick={() => {
-            clickFunction();
-          }}
-        >
-          {buttonValue}
-        </button>
-      </React.Fragment>
-    );
   };
 
   const renderBreaktime = () => {
+    console.log(allowedBreakList, 'allowedBreakList');
+
     return (
       <React.Fragment>
-        {breakList.map((list) => {
+        {allowedBreakList.map((list) => {
           return (
             <div className="item" key={list._id}>
-              <div className="right floated content">{renderButton(list)}</div>
+              <div className="right floated content">
+                {/* {renderButton(list)} */}
+
+                <button
+                  onClick={() => {
+                    console.log(userData, 'id');
+                    if (list._id === userData.currentBreakId) {
+                      const payload = userData.currentBreaktime;
+                      endBreaktime(payload);
+                      checkAllowedBreaks();
+                    } else {
+                      const payload = {
+                        break: list._id,
+                      };
+                      createBreaktime(payload);
+                      checkAllowedBreaks();
+                    }
+                  }}
+                  className={`ui teal button ${
+                    list.buttonValue
+                      ? list.buttonDisabled
+                      : list._id === userData.currentBreakId
+                      ? 'active'
+                      : ''
+                  }
+      `}
+                >
+                  {console.log(list.buttonValue, 'butonvalue')}
+                  {list.buttonValue
+                    ? list.buttonValue
+                    : list._id === userData.currentBreakId
+                    ? 'Return from break'
+                    : 'Take a break'}
+                </button>
+              </div>
               <span className="ui avatar image">
                 <i className="hourglass start icon" aria-hidden="true"></i>
               </span>
@@ -136,7 +131,13 @@ const CreateBreak = ({
           <Loader />
         ) : (
           <div className="ui middle aligned divided list">
-            {breakListStore && breaktimeStore ? renderBreaktime() : <Loader />}
+            {Array.isArray(allowedBreakList) &&
+            userData &&
+            Array.isArray(myBreaktime) ? (
+              renderBreaktime()
+            ) : (
+              <Loader />
+            )}
           </div>
         )}
       </div>
@@ -145,14 +146,12 @@ const CreateBreak = ({
 };
 
 const mapStateToProps = (store) => {
+  console.log(store, 'store');
   return {
     isFetching: store.breaks.isFetching,
     breakList: store.breaks.breakList,
     userData: store.breaks.userData,
-    breaktime: store.breaks.breaktime,
-    isOnBreak: store.breaks.isOnBreak,
     myBreaktime: store.breaks.myBreaktime,
-    breaktimeTaken: store.breaks.breaktimeTaken,
   };
 };
 const mapDispatch = (dispatch) => {
@@ -160,10 +159,9 @@ const mapDispatch = (dispatch) => {
     fetchUserBreakTime: dispatch.breaks.fetchUserBreakTime,
     fetchUserData: dispatch.breaks.fetchUserData,
     fetchBreak: dispatch.breaks.fetchBreak,
-    fetchBreakTime: dispatch.breaks.fetchBreakTime,
+
     createBreaktime: (payload) => dispatch.breaks.createBreaktime(payload),
     endBreaktime: (payload) => dispatch.breaks.endBreaktime(payload),
-    setBreaktimeTaken: (payload) => dispatch.breaks.setBreaktimeTaken(payload),
   };
 };
 export default connect(mapStateToProps, mapDispatch)(CreateBreak);

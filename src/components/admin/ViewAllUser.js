@@ -1,19 +1,22 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import Loader from '../Loader'
+import React from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Loader from '../Loader';
 
 class ViewAllUser extends React.Component {
   componentDidMount() {
-    this.fetchUsersData()
+    this.fetchUsersData();
   }
 
   fetchUsersData = async () => {
-    await this.props.fetchAllUsers()
-  }
+    await this.props.fetchUserData();
+    if (this.props.userData && this.props.userData.role === 'admin') {
+      await this.props.fetchAllUsers();
+    }
+  };
 
   renderUsersData = () => {
-    let { allUsers } = this.props
+    let { allUsers } = this.props;
     return allUsers.map((user) => {
       return (
         <tr key={user._id}>
@@ -27,13 +30,13 @@ class ViewAllUser extends React.Component {
             </Link>
           </td>
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
   render() {
-    let { isFetchingUser, allUsers } = this.props
+    let { isFetchingUser, allUsers } = this.props;
     if (isFetchingUser) {
-      return <Loader />
+      return <Loader />;
     }
     return (
       <div className="ui grid centered" style={{ padding: '10px' }}>
@@ -55,7 +58,7 @@ class ViewAllUser extends React.Component {
           </table>
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -63,12 +66,14 @@ const mapStateToProps = (store) => {
   return {
     allUsers: store.breaks.allUsers,
     isFetchingUser: store.breaks.isFetchingUser,
-  }
-}
+    userData: store.breaks.userData,
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
     fetchAllUsers: dispatch.breaks.fetchAllUsers,
-  }
-}
+    fetchUserData: dispatch.breaks.fetchUserData,
+  };
+};
 
-export default connect(mapStateToProps, mapDispatch)(ViewAllUser)
+export default connect(mapStateToProps, mapDispatch)(ViewAllUser);

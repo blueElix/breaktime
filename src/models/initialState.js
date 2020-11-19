@@ -11,6 +11,7 @@ export default {
   userBreaktime: null,
 
   breakList: null,
+  allowedBreakList: null,
   selectedBreak: null,
   isBreakFetching: false,
   breakDataResponse: null,
