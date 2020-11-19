@@ -26,4 +26,4 @@ export default {
   isFormLoading: false,
   isLoadingData: false,
   isFetching: false,
-};
+}

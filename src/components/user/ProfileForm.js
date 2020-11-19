@@ -1,7 +1,8 @@
 import React from 'react'
-import { Field, reset, reduxForm } from 'redux-form'
+import { Field, reduxForm } from 'redux-form'
+import { connect } from 'react-redux'
 
-class LoginForm extends React.Component {
+class ProfileForm extends React.Component {
   renderError({ error, touched }) {
     if (touched && error) {
       return (
@@ -12,17 +13,16 @@ class LoginForm extends React.Component {
     }
   }
 
-  renderInputPassword = ({ input, label, meta }) => {
+  renderInput = ({ input, label, meta }) => {
     const className = `field ${meta.error && meta.touched ? 'error' : ''}`
     return (
       <div className={className}>
         <label>{label}</label>
-        <input {...input} type="password" autoComplete="off" />
+        <input {...input} autoComplete="off" />
         {this.renderError(meta)}
       </div>
     )
   }
-
   renderInputEmail = ({ input, label, meta }) => {
     const className = `field ${meta.error && meta.touched ? 'error' : ''}`
     return (
@@ -34,16 +34,16 @@ class LoginForm extends React.Component {
     )
   }
 
-  onSubmit = (formValues, dispatch) => {
+  onSubmit = (formValues) => {
     this.props.onSubmit(formValues)
-    dispatch(reset('loginForm'))
   }
 
   render() {
+    let { isLoadingData } = this.props
     return (
       <form
         onSubmit={this.props.handleSubmit(this.onSubmit)}
-        className="ui large error form"
+        className={`ui large error form ${isLoadingData ? 'loading' : ''}`}
       >
         <div className="ui stacked segment">
           <Field
@@ -52,9 +52,14 @@ class LoginForm extends React.Component {
             label="Enter your Email"
           />
           <Field
-            name="password"
-            component={this.renderInputPassword}
-            label="Enter your Password"
+            name="fname"
+            component={this.renderInput}
+            label="Enter your First Name"
+          />
+          <Field
+            name="lname"
+            component={this.renderInput}
+            label="Enter your Last Name"
           />
           <button className="ui button primary">Submit</button>
         </div>
@@ -70,15 +75,26 @@ const validate = (formValues) => {
     errors.email = 'You must enter your email'
   }
 
-  if (!formValues.password) {
-    errors.password = 'You must enter your password'
+  if (!formValues.fname) {
+    errors.fname = 'You must enter your first name'
+  }
+
+  if (!formValues.lname) {
+    errors.lname = 'You must enter your last name'
   }
 
   return errors
 }
+const mapStateToProps = (store) => {
+  return {
+    isLoadingData: store.breaks.isLoadingData,
+  }
+}
 
-export default reduxForm({
-  form: 'loginForm',
+const formWrapped = reduxForm({
+  form: 'profileForm',
   validate,
   enableReinitialize: true,
-})(LoginForm)
+})(ProfileForm)
+
+export default connect(mapStateToProps)(formWrapped)

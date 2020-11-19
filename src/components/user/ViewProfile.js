@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import Loader from '../Loader';
+import Loader from '../Loader'
 
 const ViewProfile = ({ fetchUserData, userData }) => {
   // useEffect
   useEffect(() => {
     const cdm = async () => {
-      await fetchUserData();
-    };
-    cdm();
-  }, []);
+      await fetchUserData()
+    }
+    cdm()
+  }, [])
 
   return (
     <div className="ui container">
@@ -39,6 +40,15 @@ const ViewProfile = ({ fetchUserData, userData }) => {
                   <a>{userData.email}</a>
                 </div>
               </div>
+
+              <div className="item">
+                <i className="edit icon"></i>
+                <div className="content">
+                  <Link to="/edit-profile" className="item">
+                    Edit Profile
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         ) : (
@@ -46,17 +56,17 @@ const ViewProfile = ({ fetchUserData, userData }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
 const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
-  };
-};
+  }
+}
 const mapDispatch = (dispatch) => {
   return {
     fetchUserData: dispatch.breaks.fetchUserData,
-  };
-};
-export default connect(mapStateToProps, mapDispatch)(ViewProfile);
+  }
+}
+export default connect(mapStateToProps, mapDispatch)(ViewProfile)
