@@ -25,22 +25,18 @@ class ViewAllUser extends React.Component {
 
   renderUserBreaktime = () => {
     let { userBreaktime } = this.props;
-    if (Array.isArray(userBreaktime)) {
-      return userBreaktime.map((btime) => {
-        return (
-          <tr key={btime._id}>
-            <td>{btime.breakname}</td>
-            <td>{btime.createdAt}</td>
-            <td>{btime.start}</td>
-            <td>{btime.end}</td>
-            <td>{btime.overbreak ? 'YES' : 'NO'}</td>
-            <td>{btime.minsLate}</td>
-          </tr>
-        );
-      });
-    }
-
-    return <Loader />;
+    return userBreaktime.map((btime) => {
+      return (
+        <tr key={btime._id}>
+          <td>{btime.breakname}</td>
+          <td>{btime.createdAt}</td>
+          <td>{btime.start}</td>
+          <td>{btime.end}</td>
+          <td>{btime.overbreak ? 'YES' : 'NO'}</td>
+          <td>{btime.minsLate}</td>
+        </tr>
+      );
+    });
   };
 
   renderTable = () => {
@@ -79,7 +75,7 @@ class ViewAllUser extends React.Component {
               <ItemContainer name={singleUser.email} title="EMAIL" />
             </div>
           </div>
-          {userBreaktime.length > 0 ? (
+          {userBreaktime.length > 0 || userBreaktime === null ? (
             this.renderTable()
           ) : (
             <div className="ui warning message">
