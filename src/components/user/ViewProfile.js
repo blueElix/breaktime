@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-import Loader from '../Loader'
+import moment from 'moment';
+
+import Loader from '../Loader';
 
 const ViewProfile = ({
   fetchUserData,
@@ -13,16 +15,16 @@ const ViewProfile = ({
   // useEffect
   useEffect(() => {
     const cdm = async () => {
-      await fetchUserData()
-      await fetchUserBreaktimeList()
-    }
-    cdm()
-  }, [])
+      await fetchUserData();
+      await fetchUserBreaktimeList();
+    };
+    cdm();
+  }, []);
 
   const renderBreatimeList = () => {
     if (!userBreaktimeList) {
-      let userBreaktimeListStore = localStorage.getItem('userBreaktimeList')
-      userBreaktimeList = JSON.parse(userBreaktimeListStore)
+      let userBreaktimeListStore = localStorage.getItem('userBreaktimeList');
+      userBreaktimeList = JSON.parse(userBreaktimeListStore);
     }
 
     return userBreaktimeList.map((btime) => {
@@ -30,14 +32,14 @@ const ViewProfile = ({
         <tr key={btime._id}>
           <td>{btime.breakname}</td>
           <td>{btime.createdAt}</td>
-          <td>{btime.start}</td>
-          <td>{btime.end}</td>
+          <td>{moment(btime.start).format('hh:mmA')}</td>
+          <td>{moment(btime.end).format('hh:mmA')}</td>
           <td>{btime.minsLate}</td>
           <td>{btime.overbreak ? 'YES' : 'NO'}</td>
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   const renderBreaktime = () => {
     return (
@@ -57,8 +59,8 @@ const ViewProfile = ({
           <tbody>{userBreaktimeList ? renderBreatimeList() : <tr></tr>}</tbody>
         </table>
       </div>
-    )
-  }
+    );
+  };
   return (
     <div className="ui container">
       <h2 className="ui center aligned icon teal image header">
@@ -103,19 +105,19 @@ const ViewProfile = ({
       </div>
       {userData.role === 'user' ? renderBreaktime() : ''}
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
     userBreaktimeList: store.breaks.userBreaktimeList,
-  }
-}
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
     fetchUserData: dispatch.breaks.fetchUserData,
     fetchUserBreaktimeList: dispatch.breaks.fetchUserBreaktimeList,
-  }
-}
-export default connect(mapStateToProps, mapDispatch)(ViewProfile)
+  };
+};
+export default connect(mapStateToProps, mapDispatch)(ViewProfile);

@@ -1,23 +1,23 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import Loader from '../Loader'
-// import { Link } from 'react-router-dom'
+import React from 'react';
+import { connect } from 'react-redux';
+import Loader from '../Loader';
+import moment from 'moment';
 
 class ViewAllBreaktime extends React.Component {
   componentDidMount() {
-    this.fetchBreatimeList()
+    this.fetchBreatimeList();
   }
 
   fetchBreatimeList = async () => {
-    await this.props.fetchBreakTime()
-  }
+    await this.props.fetchBreakTime();
+  };
 
   renderBreatimeList = () => {
-    let { breaktime } = this.props
+    let { breaktime } = this.props;
 
     if (!breaktime) {
-      let breaktimeStore = localStorage.getItem('breaktime')
-      breaktime = JSON.parse(breaktimeStore)
+      let breaktimeStore = localStorage.getItem('breaktime');
+      breaktime = JSON.parse(breaktimeStore);
     }
 
     // const now = '2020-11-09T13:06:43.511Z'
@@ -30,8 +30,8 @@ class ViewAllBreaktime extends React.Component {
           <td>{btime.username}</td>
           <td>{btime.breakname}</td>
           <td>{btime.createdAt}</td>
-          <td>{btime.start}</td>
-          <td>{btime.end}</td>
+          <td>{moment(btime.start).format('hh:mmA')}</td>
+          <td>{moment(btime.end).format('hh:mmA')}</td>
           <td>{btime.minsLate}</td>
           <td>{btime.overbreak ? 'YES' : 'NO'}</td>
           {/* <td>
@@ -40,15 +40,15 @@ class ViewAllBreaktime extends React.Component {
             </Link>
           </td> */}
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   render() {
-    let { isFetching, breaktime } = this.props
+    let { isFetching, breaktime } = this.props;
 
     if (isFetching) {
-      return <Loader />
+      return <Loader />;
     }
 
     return (
@@ -73,7 +73,7 @@ class ViewAllBreaktime extends React.Component {
           </table>
         </div>
       </div>
-    )
+    );
   }
 }
 
@@ -81,12 +81,12 @@ const mapStateToProps = (store) => {
   return {
     breaktime: store.breaks.breaktime,
     isFetching: store.breaks.isFetching,
-  }
-}
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
     fetchBreakTime: dispatch.breaks.fetchBreakTime,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps, mapDispatch)(ViewAllBreaktime)
+export default connect(mapStateToProps, mapDispatch)(ViewAllBreaktime);
