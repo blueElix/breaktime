@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import history from '../history';
+import Loader from './Loader';
 
 class Header extends React.Component {
   constructor(props) {
@@ -93,13 +94,17 @@ class Header extends React.Component {
     window.location.reload(false);
   };
   render() {
-    return (
-      <div>
-        {this.state.role === 'admin'
-          ? this.renderForAdmin()
-          : this.renderForUser()}
-      </div>
-    );
+    if (this.props.userData) {
+      return (
+        <div>
+          {this.state.role === 'admin'
+            ? this.renderForAdmin()
+            : this.renderForUser()}
+        </div>
+      );
+    }
+
+    return null;
   }
 }
 
