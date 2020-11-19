@@ -21,7 +21,7 @@ import ViewProfile from './user/ViewProfile'
 
 const AdminRoutes = () => {
   return (
-    <React.Fragment>
+    <div className="twelve wide column">
       <Route path="/home" exact component={Home} />
       <Redirect exact from="/" to="/home" />
       <Route path="/create-break" exact component={CreateBreak} />
@@ -34,19 +34,19 @@ const AdminRoutes = () => {
       <Route path="/statistics" exact component={Statistics} />
       <Route path="/view-profile" exact component={ViewProfile} />
       <Route path="/edit-profile" exact component={EditProfile} />
-    </React.Fragment>
+    </div>
   )
 }
 
 const UserRoutes = () => {
   return (
-    <React.Fragment>
+    <div className="sixteen wide column">
       <Route path="/home" exact component={Home} />
       <Redirect exact from="/" to="/home" />
       <Route path="/breaktime" exact component={Create} />
       <Route path="/view-profile" exact component={ViewProfile} />
       <Route path="/edit-profile" exact component={EditProfile} />
-    </React.Fragment>
+    </div>
   )
 }
 
@@ -83,12 +83,14 @@ class Routes extends React.Component {
   render() {
     return (
       <div className="ui container">
-        <Header />
-        <Switch>
-          {this.state.role === 'user' ? <UserRoutes /> : <AdminRoutes />}
-          <Route component={PageNotFound} />
-          {/* <Route path="/view-profile" exact component={ViewProfile} /> */}
-        </Switch>
+        <div className="ui grid">
+          <Header />
+          <Switch>
+            {this.state.role === 'user' ? <UserRoutes /> : <AdminRoutes />}
+            <Route component={PageNotFound} />
+            {/* <Route path="/view-profile" exact component={ViewProfile} /> */}
+          </Switch>
+        </div>
       </div>
     )
   }
