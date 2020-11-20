@@ -95,13 +95,17 @@ class Header extends React.Component {
     window.location.reload(false);
   };
   render() {
-    return (
-      <div>
-        {this.state.role === 'admin'
-          ? this.renderForAdmin()
-          : this.renderForUser()}
-      </div>
-    );
+    if (this.props.userData) {
+      return (
+        <div>
+          {this.state.role === 'admin'
+            ? this.renderForAdmin()
+            : this.renderForUser()}
+        </div>
+      );
+    }
+
+    return null;
   }
 }
 
