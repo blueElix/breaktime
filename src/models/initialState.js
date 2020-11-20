@@ -29,4 +29,5 @@ export default {
   isLoadingData: false,
   isFetching: false,
   isFetchingButton: false,
-}
+  buttonClick: false,
+};

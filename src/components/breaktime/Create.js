@@ -1,27 +1,27 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import moment from 'moment'
-import Message from '../Message'
+import React from 'react';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import Message from '../Message';
 
 const Loader = () => {
-  return <div className="ui active centered inline loader"></div>
-}
+  return <div className="ui active centered inline loader"></div>;
+};
 
 class CreateBreak extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       myBreaks: [],
-    }
+    };
   }
 
   componentDidMount() {
-    this.props.fetchUserBreakTime()
-    this.props.fetchAllowedBreaks()
+    this.props.fetchUserBreakTime();
+    this.props.fetchAllowedBreaks();
   }
 
   renderBreatimeList = () => {
-    let { myBreaktime } = this.props
+    let { myBreaktime } = this.props;
     return myBreaktime.map((btime) => {
       return (
         <tr key={btime._id}>
@@ -32,12 +32,12 @@ class CreateBreak extends React.Component {
           <td>{btime.minsLate}</td>
           <td>{btime.overbreak ? 'YES' : 'NO'}</td>
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   renderBreaktime = () => {
-    let { myBreaktime } = this.props
+    let { myBreaktime } = this.props;
     return (
       <div className="content">
         <h3 className="ui center aligned teal header">Today's Breaktime</h3>
@@ -55,11 +55,11 @@ class CreateBreak extends React.Component {
           <tbody>{myBreaktime ? this.renderBreatimeList() : <tr></tr>}</tbody>
         </table>
       </div>
-    )
-  }
+    );
+  };
 
   renderAllowedBreak = () => {
-    let { allowedBreakList } = this.props
+    let { allowedBreakList } = this.props;
     if (allowedBreakList) {
       return allowedBreakList.map((list) => {
         return (
@@ -70,23 +70,28 @@ class CreateBreak extends React.Component {
                 <p style={{ fontSize: 10, color: 'teal' }}>
                   EXPECTED RETURN:{' '}
                   {moment(this.props.currentBreaktime.expected).format(
-                    'hh:mmA'
+                    'hh:mmA',
                   )}
                 </p>
               </span>
             ) : null}
 
             <div className="right floated content">
-              {this.props.isFetchingButton ? (
+              {this.props.isFetchingButton &&
+              this.props.userData.currentBreakId === list._id ? (
                 <button className="ui teal loading button">Loading</button>
+              ) : this.props.isFetchingButton ? (
+                <button className="ui teal button disabled">
+                  Take a break
+                </button>
               ) : list.isFinished ? (
                 <button className="ui teal button disabled">Finished</button>
               ) : this.props.userData.currentBreakId === list._id ? (
                 <button
                   onClick={() => {
-                    this.props.setIsFetchingButton(true)
-                    const payload = this.props.userData.currentBreaktime
-                    this.props.endBreaktime(payload)
+                    this.props.setIsFetchingButton(true);
+                    const payload = this.props.userData.currentBreaktime;
+                    this.props.endBreaktime(payload);
                   }}
                   className="ui teal button"
                 >
@@ -95,15 +100,20 @@ class CreateBreak extends React.Component {
               ) : (
                 <button
                   onClick={() => {
-                    this.props.setIsFetchingButton(true)
+                    this.props.setButtonClick(true);
+                    this.props.setIsFetchingButton(true);
                     const payload = {
                       break: list._id,
-                    }
-                    this.props.createBreaktime(payload)
+                    };
+                    this.props.createBreaktime(payload);
                   }}
-                  className={`ui teal button ${
-                    this.props.userData.currentBreakId ? 'disabled' : ''
-                  }`}
+                  className={`ui teal  ${
+                    this.props.userData.currentBreakId
+                      ? 'disabled'
+                      : this.props.buttonClick
+                      ? 'loading'
+                      : ''
+                  }   button `}
                 >
                   Take Break
                 </button>
@@ -116,15 +126,15 @@ class CreateBreak extends React.Component {
               {list.name} - {list.lengthOfBreak}mins
             </div>
           </div>
-        )
-      })
+        );
+      });
     } else {
-      return <Loader />
+      return <Loader />;
     }
-  }
+  };
 
   render() {
-    let { messageResponse } = this.props
+    let { messageResponse } = this.props;
     if (Array.isArray(this.props.myBreaktime)) {
       return (
         <div className="ui grid centered" style={{ padding: '10px' }}>
@@ -144,10 +154,10 @@ class CreateBreak extends React.Component {
             </div>
           </div>
         </div>
-      )
+      );
     }
 
-    return <Loader />
+    return <Loader />;
   }
 }
 
@@ -161,8 +171,9 @@ const mapStateToProps = (store) => {
     userData: store.breaks.userData,
     myBreaktime: store.breaks.myBreaktime,
     currentBreaktime: store.breaks.currentBreaktime,
-  }
-}
+    buttonClick: store.breaks.buttonClick,
+  };
+};
 const mapDispatch = (dispatch) => {
   return {
     fetchUserBreakTime: dispatch.breaks.fetchUserBreakTime,
@@ -172,6 +183,7 @@ const mapDispatch = (dispatch) => {
     fetchAllowedBreaks: dispatch.breaks.fetchAllowedBreaks,
     createBreaktime: (payload) => dispatch.breaks.createBreaktime(payload),
     endBreaktime: (payload) => dispatch.breaks.endBreaktime(payload),
-  }
-}
-export default connect(mapStateToProps, mapDispatch)(CreateBreak)
+    setButtonClick: (payload) => dispatch.breaks.setButtonClick(payload),
+  };
+};
+export default connect(mapStateToProps, mapDispatch)(CreateBreak);
