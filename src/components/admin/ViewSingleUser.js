@@ -81,7 +81,7 @@ class ViewAllUser extends React.Component {
               <ItemContainer name={singleUser.email} title="EMAIL" />
             </div>
           </div>
-          {userBreaktime.length > 0 ? (
+          {Array.isArray(userBreaktime) && userBreaktime.length > 0 ? (
             this.renderTable()
           ) : (
             <div className="ui warning message">
