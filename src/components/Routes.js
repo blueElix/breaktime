@@ -22,18 +22,19 @@ import ViewProfile from './user/ViewProfile'
 const AdminRoutes = () => {
   return (
     <div className="twelve wide column">
-      <Route path="/home" exact component={Home} />
-      <Redirect exact from="/" to="/home" />
-      <Route path="/create-break" exact component={CreateBreak} />
-      <Route path="/breaks/edit/:id" exact component={EditBreak} />
-      <Route path="/breaks/delete/:id" exact component={DeleteBreak} />
-      <Route path="/view-all-users" exact component={ViewAllUser} />
-      <Route path="/view/user/:id" exact component={ViewSingleUser} />
-      <Route path="/view-all-break" exact component={ViewAllBreak} />
-      <Route path="/view-all-breaktime" exact component={ViewAllBreaktime} />
-      <Route path="/statistics" exact component={Statistics} />
-      <Route path="/view-profile" exact component={ViewProfile} />
-      <Route path="/edit-profile" exact component={EditProfile} />
+      <Route path={'/'} exact component={Home} />
+      <Route path={'/home'} exact component={Home} />
+      {/* <Redirect exact from={'/'} to={'/home'} /> */}
+      <Route path={'/create-break'} exact component={CreateBreak} />
+      <Route path={'/breaks/edit/:id'} exact component={EditBreak} />
+      <Route path={'/breaks/delete/:id'} exact component={DeleteBreak} />
+      <Route path={'/view-all-users'} exact component={ViewAllUser} />
+      <Route path={'/view/user/:id'} exact component={ViewSingleUser} />
+      <Route path={'/view-all-break'} exact component={ViewAllBreak} />
+      <Route path={'/view-all-breaktime'} exact component={ViewAllBreaktime} />
+      <Route path={'/statistics'} exact component={Statistics} />
+      <Route path={'/view-profile'} exact component={ViewProfile} />
+      <Route path={'/edit-profile'} exact component={EditProfile} />
     </div>
   )
 }
