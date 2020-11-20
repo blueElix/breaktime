@@ -1,15 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import ProfileForm from './ProfileForm'
+import Message from '../Message'
 
 class EditProfile extends React.Component {
   handleSubmit = async (formValues) => {
-    console.log(formValues)
     await this.props.updateUserData(formValues)
   }
 
   render() {
-    let { userData } = this.props
+    let { userData, messageResponse } = this.props
 
     if (!userData) {
       let userStorage = localStorage.getItem('userData')
@@ -25,6 +25,7 @@ class EditProfile extends React.Component {
           <h2 className="ui teal image header">
             <div className="content">Edit Profile</div>
           </h2>
+          {messageResponse ? <Message /> : ''}
           <ProfileForm
             initialValues={{
               fname: userData.fname,
@@ -40,6 +41,7 @@ class EditProfile extends React.Component {
 }
 const mapStateToProps = (store) => {
   return {
+    messageResponse: store.breaks.messageResponse,
     userData: store.breaks.userData,
   }
 }

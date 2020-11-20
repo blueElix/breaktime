@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Loader from '../Loader'
+import Message from '../Message'
 
 class ViewAllBreak extends React.Component {
   componentDidMount() {
@@ -35,7 +36,8 @@ class ViewAllBreak extends React.Component {
     })
   }
   render() {
-    if (this.props.isFetching) {
+    let { messageResponse, isFetching } = this.props
+    if (isFetching) {
       return <Loader />
     }
     return (
@@ -44,6 +46,7 @@ class ViewAllBreak extends React.Component {
           <h2 className="ui teal image header">
             <div className="content">View All Break</div>
           </h2>
+          {messageResponse ? <Message /> : ''}
           <table className="ui table">
             <thead>
               <tr>
@@ -67,6 +70,7 @@ class ViewAllBreak extends React.Component {
 
 const mapStateToProps = (store) => {
   return {
+    messageResponse: store.breaks.messageResponse,
     breakList: store.breaks.breakList,
     isFetching: store.breaks.isFetching,
   }

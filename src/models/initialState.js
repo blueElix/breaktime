@@ -5,7 +5,6 @@ export default {
   loginUser: null,
   userData: null,
   isFetchingUser: false,
-  registerUserData: null,
   allUsers: null,
   singleUser: null,
   userBreaktime: null,
@@ -22,10 +21,12 @@ export default {
   currentBreaktime: null,
   breaktimeTaken: null,
 
+  messageResponse: null,
+
   isOnBreak: false,
   isLoading: false,
   isFormLoading: false,
   isLoadingData: false,
   isFetching: false,
   isFetchingButton: false,
-};
+}

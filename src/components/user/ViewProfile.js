@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
-import moment from 'moment';
+import moment from 'moment'
 
-import Loader from '../Loader';
+import Loader from '../Loader'
 
 const ViewProfile = ({
   fetchUserData,
@@ -15,16 +15,16 @@ const ViewProfile = ({
   // useEffect
   useEffect(() => {
     const cdm = async () => {
-      await fetchUserData();
-      await fetchUserBreaktimeList();
-    };
-    cdm();
-  }, []);
+      await fetchUserData()
+      await fetchUserBreaktimeList()
+    }
+    cdm()
+  }, [])
 
   const renderBreatimeList = () => {
     if (!userBreaktimeList) {
-      let userBreaktimeListStore = localStorage.getItem('userBreaktimeList');
-      userBreaktimeList = JSON.parse(userBreaktimeListStore);
+      let userBreaktimeListStore = localStorage.getItem('userBreaktimeList')
+      userBreaktimeList = JSON.parse(userBreaktimeListStore)
     }
 
     return userBreaktimeList.map((btime) => {
@@ -37,14 +37,14 @@ const ViewProfile = ({
           <td>{btime.minsLate}</td>
           <td>{btime.overbreak ? 'YES' : 'NO'}</td>
         </tr>
-      );
-    });
-  };
+      )
+    })
+  }
 
   const renderBreaktime = () => {
     return (
       <div>
-        <h3 class="ui center aligned teal header">Breaktime</h3>
+        <h3 className="ui center aligned teal header">Breaktime</h3>
         <table className="ui table">
           <thead>
             <tr>
@@ -59,8 +59,8 @@ const ViewProfile = ({
           <tbody>{userBreaktimeList ? renderBreatimeList() : <tr></tr>}</tbody>
         </table>
       </div>
-    );
-  };
+    )
+  }
   return (
     <div className="ui container">
       <h2 className="ui center aligned icon teal image header">
@@ -105,19 +105,19 @@ const ViewProfile = ({
       </div>
       {userData.role === 'user' ? renderBreaktime() : ''}
     </div>
-  );
-};
+  )
+}
 
 const mapStateToProps = (store) => {
   return {
     userData: store.breaks.userData,
     userBreaktimeList: store.breaks.userBreaktimeList,
-  };
-};
+  }
+}
 const mapDispatch = (dispatch) => {
   return {
     fetchUserData: dispatch.breaks.fetchUserData,
     fetchUserBreaktimeList: dispatch.breaks.fetchUserBreaktimeList,
-  };
-};
-export default connect(mapStateToProps, mapDispatch)(ViewProfile);
+  }
+}
+export default connect(mapStateToProps, mapDispatch)(ViewProfile)

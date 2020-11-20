@@ -9,9 +9,6 @@ export default {
   setLoginUser(state, payload) {
     return { ...state, loginUser: payload }
   },
-  setRegisterUser(state, payload) {
-    return { ...state, registerUserData: payload }
-  },
   setUserData(state, payload) {
     return { ...state, userData: payload }
   },
@@ -73,12 +70,17 @@ export default {
     return { ...state, isFetching: payload }
   },
   setIsFetchingButton(state, payload) {
-    return { ...state, isFetchingButton: payload };
+    return { ...state, isFetchingButton: payload }
   },
   setBreakIsFetching(state, payload) {
     return { ...state, isBreakFetching: payload }
   },
   setFormIsLoading(state, payload) {
     return { ...state, isFormLoading: payload }
+  },
+
+  // For Response
+  setMessageResponse(state, payload) {
+    return { ...state, messageResponse: payload }
   },
 }

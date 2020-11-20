@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Field, reduxForm } from 'redux-form'
+import { Field, reset, reduxForm } from 'redux-form'
 
 class BreakForm extends React.Component {
   renderError({ error, touched }) {
@@ -35,8 +35,9 @@ class BreakForm extends React.Component {
     )
   }
 
-  onSubmit = (formValues) => {
+  onSubmit = (formValues, dispatch) => {
     this.props.onSubmit(formValues)
+    dispatch(reset('breakForm'))
   }
 
   render() {

@@ -14,7 +14,15 @@ export default (dispatch) => ({
       }, 2000)
     } catch (err) {
       dispatch.breaks.setIsLoading(false)
-      alert(err.response.data.error)
+
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 2000)
     }
   },
 
@@ -35,7 +43,7 @@ export default (dispatch) => ({
     }
   },
 
-  // For get user profile or data
+  // For update user profile or data
   async updateUserData(payload) {
     let token = localStorage.getItem('token')
     try {
@@ -49,7 +57,14 @@ export default (dispatch) => ({
       history.push('/view-profile')
     } catch (err) {
       dispatch.breaks.setIsLoadingData(false)
-      console.log(err)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 2000)
     }
   },
 
@@ -94,16 +109,32 @@ export default (dispatch) => ({
   async registerUser(payload) {
     try {
       dispatch.breaks.setFormIsLoading(true)
-      let response = await breakURL.post('/auth/register', payload, {
+      await breakURL.post('/auth/register', payload, {
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      dispatch.breaks.setRegisterUser(response.data)
+
+      dispatch.breaks.setMessageResponse({
+        message: 'Successfully register',
+        header: 'Success',
+        response: 'positive',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 2000)
+
       dispatch.breaks.setFormIsLoading(false)
     } catch (err) {
-      dispatch.breaks.setIsLoading(false)
-      dispatch.breaks.setFormIsLoading(err.response.data)
+      dispatch.breaks.setFormIsLoading(false)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 2000)
     }
   },
 
@@ -119,11 +150,11 @@ export default (dispatch) => ({
       dispatch.breaks.setIsFetchingUser(false)
     } catch (err) {
       dispatch.breaks.setIsFetchingUser(false)
-      // alert(err.response.data.error);
+      console.log(err)
     }
   },
 
-  // For get all users(Admin side)
+  // For get single users(Admin side)
   async fetchSingleUser(id) {
     let loginUser = localStorage.getItem('token')
     try {
@@ -135,7 +166,7 @@ export default (dispatch) => ({
       dispatch.breaks.setIsFetchingUser(false)
     } catch (err) {
       dispatch.breaks.setIsFetchingUser(false)
-      alert(err.response.data.error)
+      console.log(err)
     }
   },
 
@@ -151,7 +182,7 @@ export default (dispatch) => ({
       dispatch.breaks.setIsFetchingUser(false)
     } catch (err) {
       dispatch.breaks.setIsFetchingUser(false)
-      alert(err.response.data.error)
+      console.log(err)
     }
   },
 
@@ -195,7 +226,6 @@ export default (dispatch) => ({
   },
 
   // Fetch Single break
-
   async fetchSelectedBreak(breakId) {
     try {
       dispatch.breaks.setBreakIsFetching(true)
@@ -219,32 +249,62 @@ export default (dispatch) => ({
           'Content-Type': 'application/json',
         },
       })
-      dispatch.breaks.setBreakDataResponse(response.data)
+      dispatch.breaks.setFormResponse(response.data)
+      dispatch.breaks.setMessageResponse({
+        message: 'Successfully create break',
+        header: 'Success',
+        response: 'positive',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
       dispatch.breaks.setFormIsLoading(false)
     } catch (err) {
       dispatch.breaks.setFormIsLoading(false)
-      dispatch.breaks.setBreakDataResponse(err.response.data)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
     }
   },
 
   // For Break Update
-  async updateBreak(id, payload) {
+  async updateBreak(payload, state) {
     let loginUser = localStorage.getItem('token')
-    let data = payload.form.breakForm.values
+    let { selectedBreak } = state.breaks
 
     try {
       dispatch.breaks.setFormIsLoading(true)
-      let response = await breakURL.put(`/breaks/${id}`, data, {
+      await breakURL.put(`/breaks/${selectedBreak._id}`, payload, {
         headers: {
           Authorization: `Bearer ${loginUser}`,
           'Content-Type': 'application/json',
         },
       })
-      dispatch.breaks.setBreakDataResponse(response.data)
-      dispatch.breaks.setFormIsLoading(false)
+      dispatch.breaks.setSelectedBreak(null)
+      history.push('/view-all-break')
+      dispatch.breaks.setMessageResponse({
+        message: 'Successfully edit break',
+        header: 'Success',
+        response: 'positive',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
     } catch (err) {
       dispatch.breaks.setFormIsLoading(false)
-      dispatch.breaks.setBreakDataResponse(err.response.data.error)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
     }
   },
 
@@ -259,12 +319,27 @@ export default (dispatch) => ({
           'Content-Type': 'application/json',
         },
       })
-      dispatch.breaks.setBreakDataResponse(response.data)
+      dispatch.breaks.setFormResponse(response.data)
+      dispatch.breaks.setMessageResponse({
+        message: 'Successfully delete break',
+        header: 'Success',
+        response: 'positive',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
       dispatch.breaks.setIsFetching(false)
       history.push('/view-all-break')
     } catch (err) {
       dispatch.breaks.setIsFetching(false)
-      dispatch.breaks.setBreakDataResponse(err.response.data.error)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 3000)
     }
   },
 
@@ -280,9 +355,9 @@ export default (dispatch) => ({
     } catch (err) {
       dispatch.breaks.setIsFetching(false)
       console.log(err)
-      //alert(err.response.data.error)
     }
   },
+
   // Fetch All breaktime by signed in user
   async fetchUserBreakTime() {
     let loginUser = localStorage.getItem('token')
@@ -292,14 +367,10 @@ export default (dispatch) => ({
           Authorization: `Bearer ${loginUser}`,
         },
       })
-
       dispatch.breaks.setmyBreaktime(response.data.data)
-      // localStorage.setItem('breaktime', JSON.stringify(response.data.data));
-      // dispatch.breaks.setIsFetching(false);
     } catch (err) {
       dispatch.breaks.setIsFetching(false)
       console.log(err)
-      //alert(err.response.data.error)
     }
   },
 
@@ -327,7 +398,6 @@ export default (dispatch) => ({
     }
   },
   async endBreaktime(payload) {
-    // console.log(payload, 'should be id of current breaktime');
     let loginUser = localStorage.getItem('token')
 
     try {
@@ -350,17 +420,28 @@ export default (dispatch) => ({
         dispatch.breaks.setCurrentBreaktime(null)
       }
       if (response.data.data.minsLate && response.data.data.overbreak) {
-        alert(
-          `You are ${response.data.data.minsLate} mins late in your ${response.data.data.breakname} break`
-        )
+        dispatch.breaks.setMessageResponse({
+          message: `You are ${response.data.data.minsLate} mins late in your ${response.data.data.breakname} break`,
+          header: 'Warning',
+          response: 'warning',
+        })
+        await setTimeout(() => {
+          dispatch.breaks.setMessageResponse(null)
+        }, 3000)
       }
 
       dispatch.breaks.setIsFetching(false)
       dispatch.breaks.setIsFetchingButton(false)
     } catch (err) {
       dispatch.breaks.setIsFetching(false)
-
-      alert(err.response.data.error)
+      dispatch.breaks.setMessageResponse({
+        message: err.response.data.error,
+        header: 'Error',
+        response: 'error',
+      })
+      await setTimeout(() => {
+        dispatch.breaks.setMessageResponse(null)
+      }, 2000)
     }
   },
 })
