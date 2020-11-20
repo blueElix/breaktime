@@ -6,9 +6,9 @@ import Register from './auth/Register'
 const AuthRoutes = () => {
   return (
     <Switch>
-      <Route path="/" exact component={Login} />
-      <Route path="/login" exact component={Login} />
-      <Route path="/register" exact component={Register} />
+      <Route path={'/'} exact component={Login} />
+      <Route path={'/login'} exact component={Login} />
+      <Route path={'/register'} exact component={Register} />
       <Route component={Login} />
     </Switch>
   )

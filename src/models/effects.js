@@ -12,9 +12,10 @@ export default (dispatch) => ({
       await setTimeout(() => {
         dispatch.breaks.setIsLoading(false)
       }, 2000)
+      history.push('/home')
     } catch (err) {
       dispatch.breaks.setIsLoading(false)
-
+      console.log(err)
       dispatch.breaks.setMessageResponse({
         message: err.response.data.error,
         header: 'Error',

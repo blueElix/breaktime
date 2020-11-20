@@ -103,7 +103,7 @@ const ViewProfile = ({
           <Loader />
         )}
       </div>
-      {userData.role === 'user' ? renderBreaktime() : ''}
+      {userData && userData.role === 'user' ? renderBreaktime() : ''}
     </div>
   )
 }

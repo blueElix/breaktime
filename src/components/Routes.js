@@ -42,11 +42,11 @@ const AdminRoutes = () => {
 const UserRoutes = () => {
   return (
     <div className="sixteen wide column">
-      <Route path="/home" exact component={Home} />
-      <Redirect exact from="/" to="/home" />
-      <Route path="/breaktime" exact component={Create} />
-      <Route path="/view-profile" exact component={ViewProfile} />
-      <Route path="/edit-profile" exact component={EditProfile} />
+      <Route path={'/'} exact component={Home} />
+      <Route path={'/home'} exact component={Home} />
+      <Route path={'/breaktime'} exact component={Create} />
+      <Route path={'/view-profile'} exact component={ViewProfile} />
+      <Route path={'/edit-profile'} exact component={EditProfile} />
     </div>
   )
 }

@@ -17,6 +17,7 @@ class CreateBreak extends React.Component {
 
   componentDidMount() {
     this.props.fetchUserBreakTime()
+    this.props.fetchAllowedBreaks()
   }
 
   renderBreatimeList = () => {
@@ -39,7 +40,7 @@ class CreateBreak extends React.Component {
     let { myBreaktime } = this.props
     return (
       <div className="content">
-        <h3 class="ui center aligned teal header">Today's Breaktime</h3>
+        <h3 className="ui center aligned teal header">Today's Breaktime</h3>
         <table className="ui table">
           <thead>
             <tr>
@@ -55,6 +56,71 @@ class CreateBreak extends React.Component {
         </table>
       </div>
     )
+  }
+
+  renderAllowedBreak = () => {
+    let { allowedBreakList } = this.props
+    if (allowedBreakList) {
+      return allowedBreakList.map((list) => {
+        return (
+          <div className="item" key={list._id}>
+            {this.props.currentBreaktime &&
+            this.props.userData.currentBreakId === list._id ? (
+              <span>
+                <p style={{ fontSize: 10, color: 'teal' }}>
+                  EXPECTED RETURN:{' '}
+                  {moment(this.props.currentBreaktime.expected).format(
+                    'hh:mmA'
+                  )}
+                </p>
+              </span>
+            ) : null}
+
+            <div className="right floated content">
+              {this.props.isFetchingButton ? (
+                <button className="ui teal loading button">Loading</button>
+              ) : list.isFinished ? (
+                <button className="ui teal button disabled">Finished</button>
+              ) : this.props.userData.currentBreakId === list._id ? (
+                <button
+                  onClick={() => {
+                    this.props.setIsFetchingButton(true)
+                    const payload = this.props.userData.currentBreaktime
+                    this.props.endBreaktime(payload)
+                  }}
+                  className="ui teal button"
+                >
+                  Return from break
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    this.props.setIsFetchingButton(true)
+                    const payload = {
+                      break: list._id,
+                    }
+                    this.props.createBreaktime(payload)
+                  }}
+                  className={`ui teal button ${
+                    this.props.userData.currentBreakId ? 'disabled' : ''
+                  }`}
+                >
+                  Take Break
+                </button>
+              )}
+            </div>
+            <span className="ui avatar image">
+              <i className="hourglass start icon" aria-hidden="true"></i>
+            </span>
+            <div className="content">
+              {list.name} - {list.lengthOfBreak}mins
+            </div>
+          </div>
+        )
+      })
+    } else {
+      return <Loader />
+    }
   }
 
   render() {
@@ -73,70 +139,7 @@ class CreateBreak extends React.Component {
             </h2>
             {messageResponse ? <Message /> : ''}
             <div className="ui middle aligned divided list">
-              {this.props.allowedBreakList.map((list) => {
-                return (
-                  <div className="item" key={list._id}>
-                    {this.props.currentBreaktime &&
-                    this.props.userData.currentBreakId === list._id ? (
-                      <span>
-                        <p style={{ fontSize: 10, color: 'teal' }}>
-                          EXPECTED RETURN:{' '}
-                          {moment(this.props.currentBreaktime.expected).format(
-                            'hh:mmA'
-                          )}
-                        </p>
-                      </span>
-                    ) : null}
-
-                    <div className="right floated content">
-                      {this.props.isFetchingButton ? (
-                        <button className="ui teal loading button">
-                          Loading
-                        </button>
-                      ) : list.isFinished ? (
-                        <button className="ui teal button disabled">
-                          Finished
-                        </button>
-                      ) : this.props.userData.currentBreakId === list._id ? (
-                        <button
-                          onClick={() => {
-                            this.props.setIsFetchingButton(true)
-                            const payload = this.props.userData.currentBreaktime
-                            this.props.endBreaktime(payload)
-                          }}
-                          className="ui teal button"
-                        >
-                          Return from break
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            this.props.setIsFetchingButton(true)
-                            const payload = {
-                              break: list._id,
-                            }
-                            this.props.createBreaktime(payload)
-                          }}
-                          className={`ui teal button ${
-                            this.props.userData.currentBreakId ? 'disabled' : ''
-                          }`}
-                        >
-                          Take Break
-                        </button>
-                      )}
-                    </div>
-                    <span className="ui avatar image">
-                      <i
-                        className="hourglass start icon"
-                        aria-hidden="true"
-                      ></i>
-                    </span>
-                    <div className="content">
-                      {list.name} - {list.lengthOfBreak}mins
-                    </div>
-                  </div>
-                )
-              })}
+              {this.renderAllowedBreak()}
               {this.renderBreaktime()}
             </div>
           </div>

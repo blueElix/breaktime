@@ -8,12 +8,8 @@ import history from '../../history'
 class Login extends React.Component {
   handleSubmit = async (formValues) => {
     let token = localStorage.getItem('token')
-    let { loginUser, messageResponse } = this.props
+    let { loginUser } = this.props
     await this.props.fetchLoginUser(formValues)
-
-    if (token || loginUser) {
-      history.push('/home')
-    }
   }
 
   render() {
